@@ -16,6 +16,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.covidService.getTotals().subscribe( ( results: CovidBasicData[] ) => {
       this.covidItem = results[0];
+      console.log(this.covidItem);
     });
   }
 
