@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CovidBasicData } from 'src/app/models/covid-basic-data';
+import { CovidService } from '../../services/covid.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor() { }
+  covidItem: CovidBasicData; //The service returns an array of CovidBasicData with just one element
+
+  constructor( private covidService: CovidService ) { }
 
   ngOnInit(): void {
+    this.covidService.getTotals().subscribe( ( results: CovidBasicData[] ) => {
+      this.covidItem = results[0];
+    });
   }
 
 }
