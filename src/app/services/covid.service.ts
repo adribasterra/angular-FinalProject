@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CovidBasicData } from '../models/covid-basic-data';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { CovidCountryData } from '../models/covid-country-data';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class CovidService {
 
   constructor(private http: HttpClient) { }
@@ -21,6 +23,45 @@ export class CovidService {
         });
       })
     );
+  }
+
+  getCountriesData(): Observable<CovidCountryData[]> {
+    let httpParams: HttpParams = new HttpParams();
+    httpParams = httpParams.set('date-format', 'YYY-MM-DD');
+    httpParams = httpParams.set('date', '2020-06-11');
+
+    const URL = 'https://covid-19-data.p.rapidapi.com/report/country/all';
+
+    return this.http
+      .get(URL, { headers: this.buildRapidApiHeaders(), params: httpParams })
+      .pipe(
+        map((data: []) => {
+          return data.map((item: JSON) => {
+            return new CovidCountryData(item);
+          });
+        })
+      );
+  }
+
+  getCountryData(date: string): Observable<CovidCountryData> {
+    let httpParams: HttpParams = new HttpParams();
+    httpParams = httpParams.set('date-format', 'YYYY-MM-DD');
+    httpParams = httpParams.set('date', date);
+    httpParams = httpParams.set('name', 'Spain');
+
+    return this.http
+      .get('https://covid-19-data.p.rapidapi.com/report/country/name', {
+        headers: this.buildRapidApiHeaders(),
+        params: httpParams,
+      })
+      .pipe(
+        map((data: []) => {
+          const itemsArray: CovidCountryData[] = data.map((item: JSON) => {
+            return new CovidCountryData(item);
+          });
+          return itemsArray[0];
+        })
+      );
   }
 
   private buildRapidApiHeaders(): HttpHeaders {

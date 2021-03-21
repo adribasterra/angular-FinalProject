@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import * as L from 'leaflet';
+import { CovidCountryData } from 'src/app/models/covid-country-data';
+import { CovidService } from '../../services/covid.service';
 
 @Component({
   selector: 'app-world-map',
@@ -7,9 +10,72 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WorldMapComponent implements OnInit {
 
-  constructor() { }
+  countryDataList: CovidCountryData[];
+  options: L.MapOptions;
+  map: L.Map;
+
+  constructor( private covidService: CovidService ) { }
 
   ngOnInit(): void {
+    this.covidService.getCountriesData().subscribe( (data : CovidCountryData[]) => {
+      this.countryDataList = data;
+      this.addMarkers();
+    });
+
+    this.options = {
+      layers: [
+        L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          attribution: '...',
+        }),
+      ],
+      zoom: 6,
+      center: L.latLng(40.41, -3.7),
+    };
   }
 
+  public onMapReady(map: L.Map): void {
+    this.map = map;
+    this.addMarkers();
+  }
+
+  public addMarkers() {
+    for (let country of this.countryDataList) {
+      let marker: L.Marker = L.marker(
+        new L.LatLng(country.latitude, country.longitude),
+        {
+          icon: L.icon({
+            iconSize: [25, 41],
+            iconAnchor: [13, 41],
+            iconUrl: 'assets/marker-icon.png',
+            shadowUrl: 'assets/marker-shadow.png',
+          }),
+        }
+      );
+
+      marker.bindPopup(this.createPopup(country));
+      marker.addTo(this.map);
+    }
+  }
+
+  public createPopup(country: CovidCountryData): HTMLDivElement {
+    let de: HTMLDivElement = document.createElement('div');
+
+    let deContentHTML: string = `<div>
+      <div>
+        Active: ${country.active}
+      </div>
+      <div>
+        Confirmed: ${country.confirmed}
+      </div>
+      <div>
+        Recovered: ${country.recovered}
+      </div>
+      <div>
+        Deaths: ${country.deaths}
+      </div>
+    `;
+    de.innerHTML = deContentHTML;
+    return de;
+  }
 }
