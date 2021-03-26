@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import * as L from 'leaflet';
 import { CovidCountryData } from 'src/app/models/covid-country-data';
 import { CovidService } from '../../services/covid.service';
@@ -14,13 +15,15 @@ export class WorldMapComponent implements OnInit {
   options: L.MapOptions;
   map: L.Map;
 
-  constructor( private covidService: CovidService ) { }
+  constructor( private covidService: CovidService, private activatedRoute : ActivatedRoute ) {
+    this.countryDataList = this.activatedRoute.snapshot.data['countriesResolved'];
+  }
 
   ngOnInit(): void {
-    this.covidService.getCountriesData().subscribe( (data : CovidCountryData[]) => {
-      this.countryDataList = data;
-      this.addMarkers();
-    });
+    // this.covidService.getCountriesData().subscribe( (data : CovidCountryData[]) => {
+    //   this.countryDataList = data;
+    //   this.addMarkers();
+    // });
 
     this.options = {
       layers: [
