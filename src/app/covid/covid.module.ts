@@ -11,10 +11,6 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
 @NgModule({
   declarations: [DashboardComponent, WorldMapComponent, WorldListComponent],
-  imports: [
-    CommonModule,
-    CovidRoutingModule,
-    LeafletModule
-  ]
+  imports: [ CommonModule, CovidRoutingModule, LeafletModule ]
 })
 export class CovidModule { }

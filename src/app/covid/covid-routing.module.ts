@@ -9,7 +9,7 @@ import { CountryResolverService } from '../resolvers/country-resolver.service';
 const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'world-list', component: WorldListComponent, canActivate: [AuthGuard] },
-  { path: 'world-map', component: WorldMapComponent, canActivate: [AuthGuard], resolve : { countriesResolved : CountryResolverService }}
+  { path: 'world-map', component: WorldMapComponent, canActivate: [AuthGuard], resolve : { countriesResolved : CountryResolverService }},
 ];
 
 @NgModule({
